@@ -43,6 +43,17 @@
 
 #include "gazebo_plugins/gazebo_ros_camera_utils.h"
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+//#include <glm/gtc/quaternion.hpp>
+//#include <glm/gtx/quaternion.hpp>
+//#include <glm/gtx/euler_angles.hpp>
+//#include <glm/gtx/norm.hpp>
+#include <glm/ext.hpp>
+#include <glm/gtx/string_cast.hpp>
+#include <GL/gl.h>
+
 namespace gazebo
 {
 ////////////////////////////////////////////////////////////////////////////////
@@ -538,6 +549,39 @@ void GazeboRosCameraUtils::Init()
                 computed_focal_length);
     }
   }
+
+  std::cout << this->camera_->Name() << " gaz P: " << this->camera_->ProjectionMatrix() << std::endl;
+//  this->camera_->UpdateCameraIntrinsics(536.473145060694, 536.8639285109052, 314.0086519801989, 246.7391576005324, 0);
+//  std::cout << "gaz new P: " << this->camera_->ProjectionMatrix() << std::endl;
+//  const ignition::math::Matrix4d P = this->camera_->BuildProjectiveMatrix(640, 480, 536.473145060694, 536.8639285109052, 314.0086519801989, 246.7391576005324, 0, 0.0001, 1000);
+//  std::cout << "gaz int P: " << P << std::endl;
+
+//  const ignition::math::Matrix4d Persp = this->camera_->BuildPerspectiveMatrix(536.473145060694, 536.8639285109052, 314.0086519801989, 246.7391576005324, 1.0, 0.0001, 1000);
+//  std::cout << "gaz int Persp: " << Persp << std::endl;
+
+//  const ignition::math::Matrix4d NDC = this->camera_->BuildNDCMatrix(0, 640, 0, 480, 0.0001, 1000);
+//  std::cout << "gaz int NDC: " << NDC << std::endl;
+
+//  const glm::mat4 ProjectionMatrix = glm::perspective(1.0756668597435934f, 640.0f / 480.0f, 0.0001f, 1000.0f);
+//  std::cout << "gaz glm P: " << glm::to_string(ProjectionMatrix) << std::endl;
+//  const glm::mat4 ProjectionMatrixF = glm::perspectiveFov(1.0756668597435934f, 640.0f, 480.0f, 0.0001f, 1000.0f);
+//  std::cout << "gaz glm PF: " << glm::to_string(ProjectionMatrixF) << std::endl;
+
+  //const ignition::math::Vector3d pw(0.28, 0.3175, 0);   // corner of box
+//  const ignition::math::Vector2i pi = this->camera_->Project(pw);
+//  std::cout << "2D point: " << pi << std::endl;
+
+  const ignition::math::Vector3d pw(0.45, 0.05, 0.05);
+  const ignition::math::Vector2i pi = this->camera_->Project(pw);
+  std::cout << "2D point: " << pi << std::endl;
+
+  const ignition::math::Vector3d pc(0.45, 0.05, 0.05);
+  const ignition::math::Vector3d pos = this->camera_->ProjectionMatrix() * pc;
+  std::cout << "2D point: " << pos << std::endl;
+  std::cout << "2D  winx: " << 0 + (640 * (pos.X()*0.5 + 0.5)) << std::endl;
+  std::cout << "2D  winy: " << 0 + (480 * (pos.Y()*0.5 + 0.5)) << std::endl;
+  std::cout << "2D  winz: " << pos.Z()*0.5 + 0.5 << std::endl;
+
 
   // fill CameraInfo
   sensor_msgs::CameraInfo camera_info_msg;
